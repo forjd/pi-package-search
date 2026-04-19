@@ -1,0 +1,61 @@
+{
+  "name": "pi-package-search",
+  "version": "0.1.0",
+  "description": "Simple Pi package that lets pi search npm for installable pi packages tagged with pi-package.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.6.0"
+  },
+  "packageManager": "npm@11.12.1",
+  "files": [
+    "extensions",
+    "skills",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "pi-package",
+    "pi",
+    "pi-extension",
+    "npm-search",
+    "package-search"
+  ],
+  "scripts": {
+    "build": "node --eval \"console.log('No build step needed for this pi package.')\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run lint && npm run typecheck && npm run test",
+    "prepare": "simple-git-hooks",
+    "prepublishOnly": "npm run check"
+  },
+  "peerDependencies": {
+    "@mariozechner/pi-coding-agent": "*",
+    "@sinclair/typebox": "*"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.12",
+    "@mariozechner/pi-coding-agent": "^0.67.68",
+    "@sinclair/typebox": "^0.34.49",
+    "@types/node": "^24.3.0",
+    "simple-git-hooks": "^2.13.1",
+    "typescript": "^5.7.3",
+    "vitest": "^3.2.4"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npm run lint && npm run typecheck",
+    "pre-push": "npm run test"
+  },
+  "pi": {
+    "extensions": [
+      "./extensions"
+    ],
+    "skills": [
+      "./skills"
+    ]
+  }
+}
