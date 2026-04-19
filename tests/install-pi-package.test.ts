@@ -18,6 +18,18 @@ describe("normalizePackageSource", () => {
     );
   });
 
+  it("accepts a full pi install command", () => {
+    expect(normalizePackageSource("pi install npm:@acme/pi-toolkit")).toBe(
+      "npm:@acme/pi-toolkit",
+    );
+  });
+
+  it("accepts a project-scope pi install command", () => {
+    expect(normalizePackageSource("pi install -l @acme/pi-toolkit")).toBe(
+      "npm:@acme/pi-toolkit",
+    );
+  });
+
   it("rejects an empty package name", () => {
     expect(() => normalizePackageSource("   ")).toThrow(
       "Package name is required",

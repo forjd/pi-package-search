@@ -31,11 +31,15 @@ export function normalizePackageSource(packageName: string): string {
     throw new Error("Package name is required");
   }
 
-  if (trimmedPackageName.startsWith("npm:")) {
-    return trimmedPackageName;
+  const normalizedInput = trimmedPackageName
+    .replace(/^pi\s+install\s+(?:-l\s+)?/i, "")
+    .trim();
+
+  if (normalizedInput.startsWith("npm:")) {
+    return normalizedInput;
   }
 
-  return `npm:${trimmedPackageName}`;
+  return `npm:${normalizedInput}`;
 }
 
 export function createInstallPiPackageTool(

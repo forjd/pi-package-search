@@ -93,6 +93,7 @@ If the user already knows what they want, `install_pi_package` can install it di
 
 - global scope: `pi install npm:@scope/package-name`
 - project scope: `pi install -l npm:@scope/package-name`
+- it also tolerates the user or model passing the full command back in, like `pi install npm:@scope/package-name`
 
 ## How it works
 
@@ -110,6 +111,7 @@ Each result is normalized into:
 
 - a bare package name like `@scope/pkg`
 - a full npm source like `npm:@scope/pkg@1.2.3`
+- a full command like `pi install npm:@scope/pkg` or `pi install -l @scope/pkg`
 
 ## Development
 
