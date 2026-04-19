@@ -51,7 +51,7 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         run: |
           set -euo pipefail
-          VERSION="$(node -p \"JSON.parse(require('node:fs').readFileSync('package.json', 'utf8')).version\")"
+          VERSION="$(node -p "JSON.parse(require('node:fs').readFileSync('package.json', 'utf8')).version")"
           for attempt in $(seq 1 18); do
             PUBLISHED_VERSION="$(npm view pi-package-search version 2>/dev/null || true)"
             if [ "$PUBLISHED_VERSION" = "$VERSION" ]; then
