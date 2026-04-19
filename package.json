@@ -1,6 +1,6 @@
 {
   "name": "pi-package-search",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Discover and install Pi packages from npm directly inside Pi.",
   "type": "module",
   "license": "MIT",
