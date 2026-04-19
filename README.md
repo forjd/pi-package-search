@@ -180,7 +180,7 @@ GitHub Actions workflows included in this repo:
 - `Release Please` — opens release PRs, bumps semver versions, and publishes to npm when a release is created
 
 > [!NOTE]
-> Automatic npm publishing needs `NPM_TOKEN`. Published-package E2E verification also needs `GEMINI_API_KEY`.
+> Automatic npm publishing only needs `NPM_TOKEN`. The release workflow no longer depends on any model provider key.
 
 ## Conventional commits and releases
 
@@ -197,6 +197,7 @@ GitHub enforcement:
 - the `Conventional Commits` workflow checks pull request titles
 - `Release Please` reads conventional commit history to decide whether the next release is a patch, minor, or major bump
 - when Release Please creates a release, the same workflow publishes the package to npm automatically
+- model-backed Pi smoke tests stay in the separate `E2E` workflow, not in the release path
 
 ## Quality checks
 

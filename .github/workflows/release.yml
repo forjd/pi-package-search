@@ -26,18 +26,11 @@ jobs:
         id: release_secrets
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           if [ -n "$NPM_TOKEN" ]; then
             echo "has_npm_token=true" >> "$GITHUB_OUTPUT"
           else
             echo "has_npm_token=false" >> "$GITHUB_OUTPUT"
-          fi
-
-          if [ -n "$GEMINI_API_KEY" ]; then
-            echo "has_gemini_api_key=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_gemini_api_key=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Fail if a release was created without npm credentials
@@ -88,15 +81,3 @@ jobs:
           done
           echo "Timed out waiting for npm to serve version $VERSION" >&2
           exit 1
-
-      - name: Install pi CLI
-        if: ${{ steps.release.outputs.release_created && steps.release_secrets.outputs.has_gemini_api_key == 'true' }}
-        run: npm install --global @mariozechner/pi-coding-agent@0.67.68
-
-      - name: Run published-package E2E smoke test
-        if: ${{ steps.release.outputs.release_created && steps.release_secrets.outputs.has_gemini_api_key == 'true' }}
-        run: bash ./scripts/e2e-smoke.sh
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          PI_E2E_ISOLATE_AGENT_DIR: "1"
-          PI_PACKAGE_SEARCH_SOURCE: npm:pi-package-search
