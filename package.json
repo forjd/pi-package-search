@@ -30,7 +30,7 @@
     "format": "biome check --write .",
     "typecheck": "tsc --noEmit",
     "check": "npm run lint && npm run typecheck && npm run test",
-    "prepare": "simple-git-hooks",
+    "prepare": "node scripts/setup-git-hooks.mjs",
     "prepublishOnly": "npm run check"
   },
   "peerDependencies": {
