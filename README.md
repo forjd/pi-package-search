@@ -6,6 +6,7 @@
 
 <p>
   <a href="https://github.com/forjd/pi-package-search/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/forjd/pi-package-search/actions/workflows/ci.yml/badge.svg?branch=main"></a>
+  <a href="https://github.com/forjd/pi-package-search/releases"><img alt="GitHub release" src="https://img.shields.io/github/v/release/forjd/pi-package-search"></a>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
   <a href="package.json"><img alt="Node >= 20.6" src="https://img.shields.io/badge/node-%3E%3D20.6-339933?logo=node.js&logoColor=white"></a>
   <a href="https://www.typescriptlang.org/"><img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white"></a>
@@ -14,6 +15,7 @@
 <p>
   <a href="https://biomejs.dev/"><img alt="Biome" src="https://img.shields.io/badge/Biome-60A5FA?logo=biome&logoColor=white"></a>
   <a href="https://vitest.dev/"><img alt="Vitest" src="https://img.shields.io/badge/tested%20with-Vitest-6E9F18?logo=vitest&logoColor=white"></a>
+  <a href="https://www.npmjs.com/package/pi-package-search"><img alt="npm version" src="https://img.shields.io/npm/v/pi-package-search"></a>
   <a href="https://github.com/forjd/pi-package-search/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/forjd/pi-package-search"></a>
   <a href="https://github.com/forjd/pi-package-search/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/forjd/pi-package-search"></a>
 </p>
