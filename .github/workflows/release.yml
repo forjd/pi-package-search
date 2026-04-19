@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
 
 jobs:
   release-please:
@@ -19,25 +20,8 @@ jobs:
         id: release
         uses: googleapis/release-please-action@v4
         with:
-          release-type: node
-          package-name: pi-package-search
-
-      - name: Check release secrets
-        id: release_secrets
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          if [ -n "$NPM_TOKEN" ]; then
-            echo "has_npm_token=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_npm_token=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Fail if a release was created without npm credentials
-        if: ${{ steps.release.outputs.release_created && steps.release_secrets.outputs.has_npm_token != 'true' }}
-        run: |
-          echo "NPM_TOKEN is required to publish releases automatically." >&2
-          exit 1
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
 
       - name: Check out repository
         if: ${{ steps.release.outputs.release_created }}
@@ -59,11 +43,9 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         run: npm run check
 
-      - name: Publish to npm
+      - name: Publish to npm with trusted publishing
         if: ${{ steps.release.outputs.release_created }}
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --provenance --access public
 
       - name: Wait for npm registry to serve the new version
         if: ${{ steps.release.outputs.release_created }}

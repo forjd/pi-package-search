@@ -172,15 +172,21 @@ Local publish sanity check:
 npm run publish:dry-run
 ```
 
+One-time npm setup after the first manual publish:
+
+1. open the `pi-package-search` package settings on npmjs.com
+2. add a trusted publisher for the GitHub repo `forjd/pi-package-search`
+3. select the workflow file `.github/workflows/release.yml`
+
 GitHub Actions workflows included in this repo:
 
 - `CI` — lint, typecheck, unit tests, and `npm pack --dry-run`
 - `Conventional Commits` — enforces a semantic pull request title
 - `E2E` — installs the package into a temp repo and exercises the real Pi flow
-- `Release Please` — opens release PRs, bumps semver versions, and publishes to npm when a release is created
+- `Release Please` — opens release PRs, bumps semver versions, and publishes to npm with trusted publishing when a release is created
 
 > [!NOTE]
-> Automatic npm publishing only needs `NPM_TOKEN`. The release workflow no longer depends on any model provider key.
+> npm publishing now uses npm trusted publishing via GitHub Actions OIDC, so the release workflow does not need `NPM_TOKEN` or any model provider key.
 
 ## Conventional commits and releases
 
@@ -196,7 +202,7 @@ GitHub enforcement:
 
 - the `Conventional Commits` workflow checks pull request titles
 - `Release Please` reads conventional commit history to decide whether the next release is a patch, minor, or major bump
-- when Release Please creates a release, the same workflow publishes the package to npm automatically
+- when Release Please creates a release, the same workflow publishes the package to npm automatically with trusted publishing
 - model-backed Pi smoke tests stay in the separate `E2E` workflow, not in the release path
 
 ## Quality checks
@@ -205,6 +211,7 @@ GitHub enforcement:
 - Biome handles formatting and linting
 - GitHub Actions runs CI plus a real Pi E2E smoke test workflow
 - commitlint and semantic PR checks enforce conventional commits
+- release-please is bootstrapped from the manually published `0.1.0` release via `.release-please-manifest.json`
 
 ## License
 
