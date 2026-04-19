@@ -63,8 +63,6 @@ pi install /absolute/path/to/pi-package-search
 pi install npm:pi-package-search
 ```
 
-> [!NOTE]
-> Use the npm form after the package has been published.
 
 ## Usage
 
