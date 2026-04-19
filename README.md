@@ -175,18 +175,35 @@ npm run publish:dry-run
 GitHub Actions workflows included in this repo:
 
 - `CI` — lint, typecheck, unit tests, and `npm pack --dry-run`
+- `Conventional Commits` — enforces a semantic pull request title
 - `E2E` — installs the package into a temp repo and exercises the real Pi flow
-- `Publish to npm` — publishes the package and then runs the published-package E2E smoke test
+- `Release Please` — opens release PRs, bumps semver versions, and publishes to npm when a release is created
 
 > [!NOTE]
-> The publish workflow needs `NPM_TOKEN` and `GEMINI_API_KEY` secrets.
+> Automatic npm publishing needs `NPM_TOKEN`. Published-package E2E verification also needs `GEMINI_API_KEY`.
+
+## Conventional commits and releases
+
+This repository uses Conventional Commits for release automation.
+
+Local enforcement:
+
+- `simple-git-hooks` runs `commitlint` in the `commit-msg` hook
+- `pre-commit` still runs lint + typecheck
+- `pre-push` still runs tests
+
+GitHub enforcement:
+
+- the `Conventional Commits` workflow checks pull request titles
+- `Release Please` reads conventional commit history to decide whether the next release is a patch, minor, or major bump
+- when Release Please creates a release, the same workflow publishes the package to npm automatically
 
 ## Quality checks
 
 - Vitest covers URL building, result mapping, formatting, install behavior, and extension registration
 - Biome handles formatting and linting
 - GitHub Actions runs CI plus a real Pi E2E smoke test workflow
-- simple-git-hooks runs checks before commit and push
+- commitlint and semantic PR checks enforce conventional commits
 
 ## License
 

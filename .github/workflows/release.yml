@@ -1,0 +1,102 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    name: Create release PRs and publish tagged releases
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run release-please
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: node
+          package-name: pi-package-search
+
+      - name: Check release secrets
+        id: release_secrets
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -n "$NPM_TOKEN" ]; then
+            echo "has_npm_token=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_npm_token=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ -n "$GEMINI_API_KEY" ]; then
+            echo "has_gemini_api_key=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_gemini_api_key=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Fail if a release was created without npm credentials
+        if: ${{ steps.release.outputs.release_created && steps.release_secrets.outputs.has_npm_token != 'true' }}
+        run: |
+          echo "NPM_TOKEN is required to publish releases automatically." >&2
+          exit 1
+
+      - name: Check out repository
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - name: Install dependencies
+        if: ${{ steps.release.outputs.release_created }}
+        run: npm ci
+
+      - name: Run project checks
+        if: ${{ steps.release.outputs.release_created }}
+        run: npm run check
+
+      - name: Publish to npm
+        if: ${{ steps.release.outputs.release_created }}
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Wait for npm registry to serve the new version
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p \"JSON.parse(require('node:fs').readFileSync('package.json', 'utf8')).version\")"
+          for attempt in $(seq 1 18); do
+            PUBLISHED_VERSION="$(npm view pi-package-search version 2>/dev/null || true)"
+            if [ "$PUBLISHED_VERSION" = "$VERSION" ]; then
+              echo "Published version $VERSION is live on npm."
+              exit 0
+            fi
+            echo "Waiting for npm to serve $VERSION (attempt $attempt/18, saw '${PUBLISHED_VERSION:-<none>}')"
+            sleep 10
+          done
+          echo "Timed out waiting for npm to serve version $VERSION" >&2
+          exit 1
+
+      - name: Install pi CLI
+        if: ${{ steps.release.outputs.release_created && steps.release_secrets.outputs.has_gemini_api_key == 'true' }}
+        run: npm install --global @mariozechner/pi-coding-agent@0.67.68
+
+      - name: Run published-package E2E smoke test
+        if: ${{ steps.release.outputs.release_created && steps.release_secrets.outputs.has_gemini_api_key == 'true' }}
+        run: bash ./scripts/e2e-smoke.sh
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PI_E2E_ISOLATE_AGENT_DIR: "1"
+          PI_PACKAGE_SEARCH_SOURCE: npm:pi-package-search

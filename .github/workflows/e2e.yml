@@ -8,9 +8,28 @@ on:
   workflow_dispatch:
 
 jobs:
+  preflight:
+    name: Decide whether E2E can run
+    runs-on: ubuntu-latest
+    outputs:
+      should-run: ${{ steps.check.outputs.should-run }}
+
+    steps:
+      - name: Check E2E prerequisites
+        id: check
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -n "$GEMINI_API_KEY" ]; then
+            echo "should-run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should-run=false" >> "$GITHUB_OUTPUT"
+          fi
+
   e2e:
     name: Pi E2E smoke test
-    if: ${{ secrets.GEMINI_API_KEY != '' }}
+    needs: preflight
+    if: ${{ needs.preflight.outputs.should-run == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -39,7 +58,8 @@ jobs:
 
   e2e-skipped:
     name: E2E skipped
-    if: ${{ secrets.GEMINI_API_KEY == '' }}
+    needs: preflight
+    if: ${{ needs.preflight.outputs.should-run != 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Explain why E2E was skipped

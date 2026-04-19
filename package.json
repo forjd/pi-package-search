@@ -41,6 +41,7 @@
     "lint": "biome check .",
     "format": "biome check --write .",
     "typecheck": "tsc --noEmit",
+    "commitlint": "commitlint --from HEAD~1 --to HEAD --verbose",
     "check": "npm run lint && npm run typecheck && npm run test",
     "e2e": "bash ./scripts/e2e-smoke.sh",
     "e2e:published": "PI_PACKAGE_SEARCH_SOURCE=npm:pi-package-search bash ./scripts/e2e-smoke.sh",
@@ -54,6 +55,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.12",
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
     "@mariozechner/pi-coding-agent": "^0.67.68",
     "@sinclair/typebox": "^0.34.49",
     "@types/node": "^24.3.0",
@@ -62,6 +65,7 @@
     "vitest": "^3.2.4"
   },
   "simple-git-hooks": {
+    "commit-msg": "npx --no -- commitlint --edit \"$1\"",
     "pre-commit": "npm run lint && npm run typecheck",
     "pre-push": "npm run test"
   },
