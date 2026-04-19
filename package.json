@@ -20,7 +20,7 @@
     "extensions",
     "skills",
     "src",
-    "scripts",
+    "scripts/setup-git-hooks.mjs",
     "README.md",
     "LICENSE"
   ],

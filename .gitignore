@@ -2,3 +2,5 @@ node_modules
 coverage
 .vitest
 *.tsbuildinfo
+__pycache__/
+*.pyc

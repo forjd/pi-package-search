@@ -125,6 +125,8 @@ npm run test
 npm run lint
 npm run format
 npm run typecheck
+npm run e2e
+npm run publish:dry-run
 ```
 
 ## Project structure
@@ -137,11 +139,53 @@ skills/pi-package-search/    # matching discovery skill
 tests/                       # Vitest coverage for tools and extension wiring
 ```
 
+## E2E smoke test
+
+Run the real Pi flow locally with your configured Pi model credentials:
+
+```bash
+npm run e2e
+```
+
+What it does:
+
+1. creates a temporary git repo
+2. installs this package into that repo
+3. runs `/skill:pi-package-search session search`
+4. verifies `search_pi_packages` was called
+5. runs `Install @kaiserlich-dev/pi-session-search in this project.`
+6. verifies `install_pi_package` was called and updated `.pi/settings.json`
+
+Useful environment variables:
+
+- `PI_PACKAGE_SEARCH_SOURCE` — override the package source, for example `npm:pi-package-search`
+- `PI_E2E_TEST_INSTALL_PACKAGE` — package installed during the smoke test
+- `PI_E2E_MODEL` — override the Pi model used during the run
+- `PI_E2E_KEEP_TMPDIR=1` — keep the temp directory for debugging
+- `PI_E2E_ISOLATE_AGENT_DIR=1` — use a clean Pi config directory instead of your current auth/config
+
+## Publishing
+
+Local publish sanity check:
+
+```bash
+npm run publish:dry-run
+```
+
+GitHub Actions workflows included in this repo:
+
+- `CI` — lint, typecheck, unit tests, and `npm pack --dry-run`
+- `E2E` — installs the package into a temp repo and exercises the real Pi flow
+- `Publish to npm` — publishes the package and then runs the published-package E2E smoke test
+
+> [!NOTE]
+> The publish workflow needs `NPM_TOKEN` and `GEMINI_API_KEY` secrets.
+
 ## Quality checks
 
 - Vitest covers URL building, result mapping, formatting, install behavior, and extension registration
 - Biome handles formatting and linting
-- GitHub Actions runs CI on Node 20 and 24
+- GitHub Actions runs CI plus a real Pi E2E smoke test workflow
 - simple-git-hooks runs checks before commit and push
 
 ## License

@@ -1,0 +1,48 @@
+name: E2E
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    name: Pi E2E smoke test
+    if: ${{ secrets.GEMINI_API_KEY != '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install pi CLI
+        run: npm install --global @mariozechner/pi-coding-agent@0.67.68
+
+      - name: Run E2E smoke test
+        run: bash ./scripts/e2e-smoke.sh
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PI_E2E_ISOLATE_AGENT_DIR: "1"
+
+  e2e-skipped:
+    name: E2E skipped
+    if: ${{ secrets.GEMINI_API_KEY == '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain why E2E was skipped
+        run: |
+          echo "Skipping Pi E2E smoke test because GEMINI_API_KEY is not configured."
+          echo "Add GEMINI_API_KEY as a repository or organization secret to enable this workflow."
